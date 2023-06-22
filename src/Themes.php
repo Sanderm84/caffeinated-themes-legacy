@@ -76,7 +76,7 @@ class Themes
 	 */
 	public function registerNamespace($theme)
 	{
-		$this->viewFactory->addNamespace($theme, $this->getThemePath($theme).'views');
+		$this->viewFactory->addNamespace($theme, $this->getThemePath($theme) . 'views');
 	}
 
 	/**
@@ -186,7 +186,7 @@ class Themes
 	public function getView($view)
 	{
 		$activeTheme = $this->getActive();
-		$parent      = $this->getProperty($activeTheme.'::parent');
+		$parent      = $this->getProperty($activeTheme . '::parent');
 
 		$views = [
 			'theme'  => $this->getThemeNamespace($view),
@@ -213,7 +213,7 @@ class Themes
 	 */
 	public function view($view, $data = array())
 	{
-		if (! is_null($this->layout)) {
+		if (!is_null($this->layout)) {
 			$data['theme_layout'] = $this->getLayout();
 		}
 
@@ -253,7 +253,7 @@ class Themes
 	 */
 	public function getThemePath($theme)
 	{
-		return $this->getPath()."/{$theme}/";
+		return $this->getPath() . "/{$theme}/";
 	}
 
 	/**
@@ -264,7 +264,7 @@ class Themes
 	 */
 	public function getJsonPath($theme)
 	{
-		return $this->getThemePath($theme).'/theme.json';
+		return $this->getThemePath($theme) . '/theme.json';
 	}
 
 	/**
@@ -279,7 +279,7 @@ class Themes
 
 		$default = [];
 
-		if ( ! $this->exists($theme))
+		if (!$this->exists($theme))
 			return $default;
 
 		$path = $this->getJsonPath($theme);
@@ -320,7 +320,11 @@ class Themes
 	{
 		list($theme, $key) = explode('::', $property);
 
-		return array_get($this->getJsonContents($theme), $key, $default);
+		if (function_exists('array_get')) {
+			return array_get($this->getJsonContents($theme), $key, $default);
+		}
+
+		return ("Illuminate\Support\Arr")::get($this->getJsonContents($theme), $key, $default);
 	}
 
 	/**
@@ -368,10 +372,10 @@ class Themes
 			$asset = $segments[0];
 		}
 
-		return url($this->config->get('themes.paths.base').'/'
-			.($theme ?: $this->getActive()).'/'
-			.$this->config->get('themes.paths.assets').'/'
-			.$asset);
+		return url($this->config->get('themes.paths.base') . '/'
+			. ($theme ?: $this->getActive()) . '/'
+			. $this->config->get('themes.paths.assets') . '/'
+			. $asset);
 	}
 
 	/**
@@ -394,9 +398,9 @@ class Themes
 	protected function getThemeNamespace($key, $theme = null)
 	{
 		if (is_null($theme)) {
-			return $this->getActive()."::{$key}";
+			return $this->getActive() . "::{$key}";
 		} else {
-			return $theme."::{$key}";
+			return $theme . "::{$key}";
 		}
 	}
 
